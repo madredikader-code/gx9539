@@ -1,0 +1,205 @@
+-- // NOKS Hub - Ultimate Master Animation & Emote Hub \\ --
+-- // الأرشيف الشامل والمهووس لكل مشيات ورقصات روبلوكس - NOKS // --
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
+
+-- إزالة الواجهة القديمة لمنع التكرار
+if PlayerGui:FindFirstChild("NOKS_Master_Animations") then
+    PlayerGui.NOKS_Master_Animations:Destroy()
+end
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "NOKS_Master_Animations"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.Parent = PlayerGui
+
+-- النافذة الرئيسية للوحة
+local MainFrame = Instance.new("Frame")
+MainFrame.Size = UDim2.new(0, 340, 0, 500)
+MainFrame.Position = UDim2.new(0.05, 0, 0.15, 0)
+MainFrame.BackgroundColor3 = Color3.fromRGB(12, 12, 18)
+MainFrame.BorderSizePixel = 0
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.Parent = ScreenGui
+
+local UICorner = Instance.new("UICorner")
+UICorner.CornerRadius = UDim.new(0, 14)
+UICorner.Parent = MainFrame
+
+-- عنوان اللوحة
+local Title = Instance.new("TextLabel")
+Title.Size = UDim2.new(1, 0, 0, 45)
+Title.BackgroundColor3 = Color3.fromRGB(22, 22, 35)
+Title.Text = "👑 NOKS Hub | الأرشيف الشامل للمشيات والرقصات"
+Title.TextColor3 = Color3.fromRGB(0, 170, 255)
+Title.TextSize = 13
+Title.Font = Enum.Font.GothamBold
+Title.Parent = MainFile or MainFrame
+
+local TitleCorner = Instance.new("UICorner")
+TitleCorner.CornerRadius = UDim.new(0, 14)
+TitleCorner.Parent = Title
+
+-- قائمة الأزرار (ScrollingFrame) مساحة عملاقة تستوعب كل العناصر بثبات
+local ScrollingFrame = Instance.new("ScrollingFrame")
+ScrollingFrame.Size = UDim2.new(0.92, 0, 0, 425)
+ScrollingFrame.Position = UDim2.new(0.04, 0, 0, 55)
+ScrollingFrame.BackgroundColor3 = Color3.fromRGB(16, 16, 25)
+ScrollingFrame.BorderSizePixel = 0
+ScrollingFrame.CanvasSize = UDim2.new(0, 0, 7.5, 0)
+ScrollingFrame.Parent = MainFrame
+
+local ScrollCorner = Instance.new("UICorner")
+ScrollCorner.CornerRadius = UDim.new(0, 10)
+ScrollCorner.Parent = ScrollingFrame
+
+local UIListLayout = Instance.new("UIListLayout")
+UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+UIListLayout.Padding = UDim.new(0, 6)
+UIListLayout.Parent = ScrollingFrame
+
+-- قاعدة بيانات مهووسة وشاملة تضم كل المشيات والرقصات الأصلية والعالمية
+local masterList = {
+    -- [ قسم المشيات الأسطورية والتحركات الفخمة ] --
+    {Category = "--- [ 🚶‍♂️ قسم المشيات والركض ] ---", ID = 0},
+    {Name = "Default Walk (المشي العادي)", Type = "Walk", ID = 507777768},
+    {Name = "Default Run (الركض العادي)", Type = "Run", ID = 507778482},
+    {Name = "Toy Walk (مشية الألعاب الفخمة)", Type = "Walk", ID = 656118852},
+    {Name = "Toy Run (ركض الألعاب السريع)", Type = "Run", ID = 656118791},
+    {Name = "Knight Walk (مشية الفارس الأسطوري)", Type = "Walk", ID = 656121699},
+    {Name = "Knight Run (ركض الفارس القوي)", Type = "Run", ID = 656121590},
+    {Name = "Levitation Walk (مشية الطفو والغرور)", Type = "Walk", ID = 1014390418},
+    {Name = "Levitation Run (ركض الطفو)", Type = "Run", ID = 1014390280},
+    {Name = "Zombie Walk (مشية الزومبي المرعبة)", Type = "Walk", ID = 616158038},
+    {Name = "Zombie Run (ركض الزومبي المجنون)", Type = "Run", ID = 616157871},
+    {Name = "Cartwheel Walk (مشية الاستعراض الدائري)", Type = "Walk", ID = 1014418046},
+    {Name = "Bubbly Walk (مشية الحركات المرحة)", Type = "Walk", ID = 1083216680},
+    {Name = "Bubbly Run (ركض المرح النشيط)", Type = "Run", ID = 1083218792},
+    {Name = "Vampire Walk (مشية مصاص الدماء الفخمة)", Type = "Walk", ID = 1083195520},
+    {Name = "Vampire Run (ركض مصاص الدماء السريع)", Type = "Run", ID = 1083197820},
+    {Name = "Elder Walk (مشية الشخصية الكلاسيكية الكبيرة)", Type = "Walk", ID = 845397899},
+
+    -- [ قسم الرقصات الكلاسيكية الافتراضية ] --
+    {Category = "--- [ 💃 قسم الرقصات الكلاسيكية ] ---", ID = 0},
+    {Name = "Wave (تلويح باليد)", Type = "Emote", ID = 507770239},
+    {Name = "Point (إشارة باليد)", Type = "Emote", ID = 507770453},
+    {Name = "Laugh (ضحكة ساخرة)", Type = "Emote", ID = 507770677},
+    {Name = "Cheer (تحية عسكرية)", Type = "Emote", ID = 507771955},
+    {Name = "Dance 1 (رقصة كلاسيكية 1)", Type = "Emote", ID = 507771019},
+    {Name = "Dance 2 (رقصة كلاسيكية 2)", Type = "Emote", ID = 507772104},
+
+    -- [ قسم أشهر رقصات الكتالوج والعالمية ] --
+    {Category = "--- [ 🔥 قسم الرقصات العالمية والكتالوج ] ---", ID = 0},
+    {Name = "Floss (رقصة الفلوس الشهيرة)", Type = "Emote", ID = 10714340543},
+    {Name = "Hype Dance (رقصة الحماس الكبرى)", Type = "Emote", ID = 33796335},
+    {Name = "Take The L (حركة الخسارة الشهيرة)", Type = "Emote", ID = 591872667},
+    {Name = "Hip Hop (رقصة الهيب هوب)", Type = "Emote", ID = 591872667},
+    {Name = "Jitter / Crazy (رقصة المجنون السريعة)", Type = "Emote", ID = 591872825},
+    {Name = "Line Dance (الرقصة الجماعية)", Type = "Emote", ID = 591873107},
+    {Name = "Stadium (حماس الملعب)", Type = "Emote", ID = 591873527},
+    {Name = "Couture (عرض الأزياء)", Type = "Emote", ID = 591873902},
+    {Name = "Shout (صراخ حماسي)", Type = "Emote", ID = 591874218},
+    {Name = "Fast Arms (الأذرع السريعة)", Type = "Emote", ID = 591874558},
+    {Name = "Tilt Head (إمالة الرأس)", Type = "Emote", ID = 633758362},
+    {Name = "Arm Swing (تلويح الأذرع)", Type = "Emote", ID = 633759371},
+    {Name = "Shoulder Bounce (نطرة الكتف)", Type = "Emote", ID = 633760377},
+    {Name = "Side Step (الخطوة الجانبية)", Type = "Emote", ID = 633761355},
+    {Name = "Turn Around (استدارة كاملة)", Type = "Emote", ID = 633762316},
+    {Name = "Dynamic Vibe (فايب ديناميكي)", Type = "Emote", ID = 859239851},
+    {Name = "Energy Flow (تدفق الطاقة)", Type = "Emote", ID = 859240411},
+    {Name = "Energy Burst (طاقة الاندفاع)", Type = "Emote", ID = 859241579},
+    {Name = "Showcase (حركة الاستعراض)", Type = "Emote", ID = 859242080},
+    {Name = "Hype 1 (تفاعل الحماس 1)", Type = "Emote", ID = 949021484},
+    {Name = "Hype 2 (تفاعل الحماس 2)", Type = "Emote", ID = 949022080},
+    {Name = "Balance (حركة الاستقرار)", Type = "Emote", ID = 949022668},
+    {Name = "Rhythm (الحركة الإيقاعية)", Type = "Emote", ID = 949023225},
+    {Name = "Chill Vibe (فايب هادئ)", Type = "Emote", ID = 949023770},
+    {Name = "Pro Stance (الوقفة الاحترافية)", Type = "Emote", ID = 1026117400},
+    {Name = "Balance Move (حركة التوازن)", Type = "Emote", ID = 1026117961},
+    {Name = "Mega Rhythm (الرقصة الإيقاعية الكبرى)", Type = "Emote", ID = 1026118498},
+    {Name = "Speed Move (حركة السرعة)", Type = "Emote", ID = 1026119013},
+    {Name = "Final Hype (الخاتمة الحماسية)", Type = "Emote", ID = 1026119535}
+}
+
+local currentTrack = nil
+
+-- دالة تشغيل الرقصات
+local function PlayEmote(animId)
+    local character = LocalPlayer.Character
+    if not character then return end
+    local humanoid = character:FindFirstChildOfClass("Humanoid")
+    if not humanoid then return end
+    
+    if currentTrack then
+        currentTrack:Stop()
+    end
+
+    local animator = humanoid:FindFirstChildOfClass("Animator") or Instance.new("Animator", humanoid)
+    local anim = Instance.new("Animation")
+    anim.AnimationId = "rbxassetid://" .. tostring(animId)
+    
+    pcall(function()
+        currentTrack = animator:LoadAnimation(anim)
+        currentTrack:Play()
+        currentTrack.Looped = true
+    end)
+end
+
+-- دالة تغيير المشيات
+local function ApplyWalkpack(animId, animType)
+    local character = LocalPlayer.Character
+    if not character then return end
+    
+    local animateScript = character:FindFirstChild("Animate")
+    if animateScript and animateScript:IsA("LocalScript") then
+        local animString = (animType == "Run") and "run" or "walk"
+        local animObj = animateScript:FindFirstChild(animString)
+        if animObj then
+            local animIdObj = animObj:FindFirstChildOfClass("Animation")
+            if animIdObj then
+                animIdObj.AnimationId = "rbxassetid://" .. tostring(animId)
+            end
+        end
+    end
+end
+
+-- بناء العناصر في الواجهة (عناوين الأقسام وأزرار الأنشطة المستقلة)
+for _, item in ipairs(masterList) do
+    if item.Category then
+        local lbl = Instance.new("TextLabel")
+        lbl.Size = UDim2.new(1, -10, 0, 30)
+        lbl.BackgroundTransparency = 1
+        lbl.Text = item.Category
+        lbl.TextColor3 = Color3.fromRGB(0, 170, 255)
+        lbl.TextSize = 13
+        lbl.Font = Enum.Font.GothamBold
+        lbl.TextXAlignment = Enum.TextXAlignment.Left
+        lbl.Parent = ScrollingFrame
+    else
+        local btn = Instance.new("TextButton")
+        btn.Size = UDim2.new(1, -10, 0, 36)
+        btn.BackgroundColor3 = Color3.fromRGB(30, 30, 45)
+        btn.Text = item.Name
+        btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        btn.TextSize = 12
+        btn.Font = Enum.Font.GothamMedium
+        btn.Parent = ScrollingFrame
+
+        local btnCorner = Instance.new("UICorner")
+        btnCorner.CornerRadius = UDim.new(0, 6)
+        btnCorner.Parent = btn
+
+        btn.MouseButton1Click:Connect(function()
+            if item.Type == "Walk" or item.Type == "Run" then
+                ApplyWalkpack(item.ID, item.Type)
+            else
+                PlayEmote(item.ID)
+            end
+        end)
+    end
+end
+
+print("👑 تم تفعيل الأرشيف الشامل والمهووس للمشيات والرقصات داخل NOKS Hub بنجاح!")
