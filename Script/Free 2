@@ -1,0 +1,135 @@
+-- // NOKS Hub - ESP & Teleport System \\ --
+-- // مخصص لمستودع NOKS - متاح للجميع // --
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
+
+-- إزالة أي واجهة قديمة لمنع التكرار
+if PlayerGui:FindFirstChild("NOKS_Hub_Main") then
+    PlayerGui.NOKS_Hub_Main:Destroy()
+end
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "NOKS_Hub_Main"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.Parent = PlayerGui
+
+-- النافذة الرئيسية
+local MainFrame = Instance.new("Frame")
+MainFrame.Size = UDim2.new(0, 320, 0, 380)
+MainFrame.Position = UDim2.new(0.05, 0, 0.2, 0)
+MainFrame.BackgroundColor3 = Color3.fromRGB(18, 18, 28)
+MainFrame.BorderSizePixel = 0
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.Parent = ScreenGui
+
+local UICorner = Instance.new("UICorner")
+UICorner.CornerRadius = UDim.new(0, 10)
+UICorner.Parent = MainFrame
+
+-- شريط العنوان
+local TitleLabel = Instance.new("TextLabel")
+TitleLabel.Size = UDim2.new(1, 0, 0, 40)
+TitleLabel.BackgroundColor3 = Color3.fromRGB(28, 28, 45)
+TitleLabel.Text = "👑 NOKS Hub | لوحة التحكم"
+TitleLabel.TextColor3 = Color3.fromRGB(0, 170, 255)
+TitleLabel.TextSize = 15
+TitleLabel.Font = Enum.Font.GothamBold
+TitleLabel.Parent = MainFrame
+
+local TitleCorner = Instance.new("UICorner")
+TitleCorner.CornerRadius = UDim.new(0, 10)
+TitleCorner.Parent = TitleLabel
+
+-- زر تفعيل/إيقاف ESP
+local ESPButton = Instance.new("TextButton")
+ESPButton.Size = UDim2.new(0.9, 0, 0, 45)
+ESPButton.Position = UDim2.new(0.05, 0, 0, 60)
+ESPButton.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
+ESPButton.Text = "تفعيل كشف الأماكن (ESP): إيقاف"
+ESPButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+ESPButton.TextSize = 14
+ESPButton.Font = Enum.Font.GothamBold
+ESPButton.Parent = MainFrame
+
+local ESPCorner = Instance.new("UICorner")
+ESPCorner.CornerRadius = UDim.new(0, 8)
+ESPCorner.Parent = ESPButton
+
+-- قائمة اللاعبين للانتقال السريع (Teleport)
+local ScrollingFrame = Instance.new("ScrollingFrame")
+ScrollingFrame.Size = UDim2.new(0.9, 0, 0, 240)
+ScrollingFrame.Position = UDim2.new(0.05, 0, 0, 120)
+ScrollingFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 38)
+ScrollingFrame.BorderSizePixel = 0
+ScrollingFrame.CanvasSize = UDim2.new(0, 0, 2, 0)
+ScrollingFrame.Parent = MainFrame
+
+local ScrollCorner = Instance.new("UICorner")
+ScrollCorner.CornerRadius = UDim.new(0, 8)
+ScrollCorner.Parent = ScrollingFrame
+
+local UIListLayout = Instance.new("UIListLayout")
+UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+UIListLayout.Padding = UDim.new(0, 5)
+UIListLayout.Parent = ScrollingFrame
+
+-- نظام الـ ESP البسيط
+local ESPEnabled = false
+local Drawings = {}
+
+ESPButton.MouseButton1Click:Connect(function()
+    ESPEnabled = not ESPEnabled
+    if ESPEnabled then
+        ESPButton.Text = "تفعيل كشف الأماكن (ESP): شغال"
+        ESPButton.BackgroundColor3 = Color3.fromRGB(0, 200, 100)
+    else
+        ESPButton.Text = "تفعيل كشف الأماكن (ESP): إيقاف"
+        ESPButton.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
+        for _, box in pairs(Drawings) do
+            if box then box:Destroy() end
+        end
+        Drawings = {}
+    end
+end)
+
+-- تحديث قائمة اللاعبين وأزرار النقل
+local function RefreshPlayerList()
+    for _, child in pairs(ScrollingFrame:GetChildren()) do
+        if child:IsA("TextButton") then
+            child:Destroy()
+        end
+    end
+
+    for _, p in pairs(Players:GetPlayers()) do
+        if p ~= LocalPlayer then
+            local pButton = Instance.new("TextButton")
+            pButton.Size = UDim2.new(1, -10, 0, 35)
+            pButton.BackgroundColor3 = Color3.fromRGB(40, 40, 60)
+            pButton.Text = "انتقال إلى: " .. p.Name
+            pButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+            pButton.TextSize = 13
+            pButton.Font = Enum.Font.Gotham
+            pButton.Parent = ScrollingFrame
+
+            local btnCorner = Instance.new("UICorner")
+            btnCorner.CornerRadius = UDim.new(0, 6)
+            btnCorner.Parent = pButton
+
+            pButton.MouseButton1Click:Connect(function()
+                if p.Character and p.Character:FindFirstChild("HumanoidRootPart") and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                    LocalPlayer.Character.HumanoidRootPart.CFrame = p.Character.HumanoidRootPart.CFrame + Vector3.new(0, 3, 0)
+                end
+            end)
+        end
+    end
+end
+
+Players.PlayerAdded:Connect(RefreshPlayerList)
+Players.PlayerRemoving:Connect(RefreshPlayerList)
+RefreshPlayerList()
+
+print("⚡ تم تحميل سكريبت NOKS ESP & Teleport بنجاح!")
