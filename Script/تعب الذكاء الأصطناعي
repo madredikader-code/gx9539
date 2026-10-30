@@ -1,0 +1,329 @@
+-- // NOKS Hub - Ultimate Fullscreen Mini-Games Arcade // --
+-- // مركز ألعاب NOKS الشامل - باركور الزومبي وصيد الوحش // --
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
+
+-- إزالة الواجهة القديمة لمنع التكرار
+if PlayerGui:FindFirstChild("NOKS_Arcade_System") then
+    PlayerGui.NOKS_Arcade_System:Destroy()
+end
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "NOKS_Arcade_System"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.Parent = PlayerGui
+
+-------------------------------------------------------------------------
+-- 1. واجهة التحذير الأولى (صغيرة وقابلة للإغلاق)
+-------------------------------------------------------------------------
+local WarningFrame = Instance.new("Frame")
+WarningFrame.Size = UDim2.new(0, 320, 0, 180)
+WarningFrame.Position = UDim2.new(0.5, -160, 0.4, -90)
+WarningFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 22)
+WarningFrame.BorderSizePixel = 0
+WarningFrame.Active = true
+WarningFrame.Draggable = true
+WarningFrame.Parent = ScreenGui
+
+local WarnCorner = Instance.new("UICorner")
+WarnCorner.CornerRadius = UDim.new(0, 14)
+WarnCorner.Parent = WarningFrame
+
+local WarnTitle = Instance.new("TextLabel")
+WarnTitle.Size = UDim2.new(1, 0, 0, 40)
+WarnTitle.BackgroundColor3 = Color3.fromRGB(25, 25, 38)
+WarnTitle.Text = "⚠️ تحذير نظام NOKS"
+WarnTitle.TextColor3 = Color3.fromRGB(255, 60, 60)
+WarnTitle.TextSize = 14
+WarnTitle.Font = Enum.Font.GothamBold
+WarnTitle.Parent = WarningFrame
+
+local WTCorner = Instance.new("UICorner")
+WTCorner.CornerRadius = UDim.new(0, 14)
+WTCorner.Parent = WarnTitle
+
+local WarnText = Instance.new("TextLabel")
+WarnText.Size = UDim2.new(0.9, 0, 0, 60)
+WarnText.Position = UDim2.new(0.05, 0, 0.3, 0)
+WarnText.BackgroundTransparency = 1
+WarnText.Text = "أنت على وشك الدخول إلى عالم الألعاب الداخلي لـ NOKS.\nهل تريد تكبير الواجهة لتغطية الشاشة والبدء؟"
+WarnText.TextColor3 = Color3.fromRGB(220, 220, 220)
+WarnText.TextSize = 12
+WarnText.Font = Enum.Font.GothamMedium
+WarnText.TextWrapped = true
+WarnText.Parent = WarningFrame
+
+local EnterGameBtn = Instance.new("TextButton")
+EnterGameBtn.Size = UDim2.new(0.44, 0, 0, 35)
+EnterGameBtn.Position = UDim2.new(0.05, 0, 0.72, 0)
+EnterGameBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+EnterGameBtn.Text = "✅ نعم، اكفل الشاشة"
+EnterGameBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+EnterGameBtn.TextSize = 11
+EnterGameBtn.Font = Enum.Font.GothamBold
+EnterGameBtn.Parent = WarningFrame
+
+local EBtnCorner = Instance.new("UICorner")
+EBtnCorner.CornerRadius = UDim.new(0, 8)
+EBtnCorner.Parent = EnterGameBtn
+
+local CloseWarnBtn = Instance.new("TextButton")
+CloseWarnBtn.Size = UDim2.new(0.44, 0, 0, 35)
+CloseWarnBtn.Position = UDim2.new(0.51, 0, 0.72, 0)
+CloseWarnBtn.BackgroundColor3 = Color3.fromRGB(200, 40, 40)
+CloseWarnBtn.Text = "❌ إغلاق"
+CloseWarnBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseWarnBtn.TextSize = 11
+CloseWarnBtn.Font = Enum.Font.GothamBold
+CloseWarnBtn.Parent = WarningFrame
+
+local CBtnCorner = Instance.new("UICorner")
+CBtnCorner.CornerRadius = UDim.new(0, 8)
+CBtnCorner.Parent = CloseWarnBtn
+
+-------------------------------------------------------------------------
+-- 2. الواجهة الرئيسية الكاملة (تغطي الشاشة للعب)
+-------------------------------------------------------------------------
+local FullscreenHub = Instance.new("Frame")
+FullscreenHub.Size = UDim2.new(1, 0, 1, 0)
+FullscreenHub.Position = UDim2.new(0, 0, 0, 0)
+FullscreenHub.BackgroundColor3 = Color3.fromRGB(8, 8, 12)
+FullscreenHub.BackgroundTransparency = 0.1
+FullscreenHub.BorderSizePixel = 0
+FullscreenHub.Visible = false
+FullscreenHub.Parent = ScreenGui
+
+-- شريط علوي للتحكم وتبديل الألعاب
+local TopBar = Instance.new("Frame")
+TopBar.Size = UDim2.new(1, 0, 0, 50)
+TopBar.BackgroundColor3 = Color3.fromRGB(15, 15, 22)
+TopBar.BorderSizePixel = 0
+TopBar.Parent = FullscreenHub
+
+local HubTitle = Instance.new("TextLabel")
+HubTitle.Size = UDim2.new(0.4, 0, 1, 0)
+HubTitle.Position = UDim2.new(0.03, 0, 0, 0)
+HubTitle.BackgroundTransparency = 1
+HubTitle.Text = "👑 NOKS Arcade Hub"
+HubTitle.TextColor3 = Color3.fromRGB(0, 170, 255)
+HubTitle.TextSize = 15
+HubTitle.Font = Enum.Font.GothamBold
+HubTitle.TextXAlignment = Enum.TextXAlignment.Left
+HubTitle.Parent = TopBar
+
+-- زر الانتقال للعبة الأولى (صيد الوحش المتحرك 🐒)
+local Game1Btn = Instance.new("TextButton")
+Game1Btn.Size = UDim2.new(0, 160, 0, 34)
+Game1Btn.Position = UDim2.new(0.45, 0, 0.15, 0)
+GameBtnStyle = Color3.fromRGB(30, 30, 45)
+Game1Btn.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+Game1Btn.Text = "🐒 لعبة صيد الوحش"
+Game1Btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+Game1Btn.TextSize = 12
+Game1Btn.Font = Enum.Font.GothamBold
+Game1Btn.Parent = TopBar
+
+local G1Corner = Instance.new("UICorner")
+G1Corner.CornerRadius = UDim.new(0, 8)
+G1Corner.Parent = Game1Btn
+
+-- زر الانتقال للعبة الثانية (الزومبي والباركور 🧟‍♂️)
+local Game2Btn = Instance.new("TextButton")
+Game2Btn.Size = UDim2.new(0, 160, 0, 34)
+Game2Btn.Position = UDim2.new(0.62, 0, 0.15, 0)
+Game2Btn.BackgroundColor3 = Color3.fromRGB(50, 30, 60)
+Game2Btn.Text = "🧟‍♂️ هروب الزومبي (باركور)"
+Game2Btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+Game2Btn.TextSize = 12
+Game2Btn.Font = Enum.Font.GothamBold
+Game2Btn.Parent = TopBar
+
+local G2Corner = Instance.new("UICorner")
+G2Corner.CornerRadius = UDim.new(0, 8)
+G2Corner.Parent = Game2Btn
+
+-- زر إغلاق الواجهة بالكامل
+local ExitFullBtn = Instance.new("TextButton")
+ExitFullBtn.Size = UDim2.new(0, 40, 0, 34)
+ExitFullBtn.Position = UDim2.new(0.93, 0, 0.15, 0)
+ExitFullBtn.BackgroundColor3 = Color3.fromRGB(180, 30, 30)
+ExitFullBtn.Text = "✕"
+ExitFullBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+ExitFullBtn.TextSize = 14
+ExitFullBtn.Font = Enum.Font.GothamBold
+ExitFullBtn.Parent = TopBar
+
+local ExitCorner = Instance.new("UICorner")
+ExitCorner.CornerRadius = UDim.new(0, 8)
+ExitCorner.Parent = ExitFullBtn
+
+-------------------------------------------------------------------------
+-- الحاوية الخاصة باللعبة الأولى (صيد الوحش المتحرك 🐒)
+-------------------------------------------------------------------------
+local Game1Container = Instance.new("Frame")
+Game1Container.Size = UDim2.new(1, 0, 1, -50)
+Game1Container.Position = UDim2.new(0, 0, 0, 50)
+Game1Container.BackgroundTransparency = 1
+Game1Container.Visible = true
+Game1Container.Parent = FullscreenHub
+
+local Score1 = Instance.new("TextLabel")
+Score1.Size = UDim2.new(0, 200, 0, 40)
+Score1.Position = UDim2.new(0.05, 0, 0.05, 0)
+Score1.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
+Score1.Text = "🎯 ضربات الوحش: 0"
+Score1.TextColor3 = Color3.fromRGB(255, 215, 0)
+Score1.TextSize = 14
+Score1.Font = Enum.Font.GothamBold
+Score1.Parent = Game1Container
+
+local S1C = Instance.new("UICorner")
+S1C.CornerRadius = UDim.new(0, 8)
+S1C.Parent = Score1
+
+-- الوحش المتحرك 🐒
+local Monster = Instance.new("TextButton")
+Monster.Size = UDim2.new(0, 60, 0, 60)
+Monster.Position = UDim2.new(0.5, 0, 0.4, 0)
+Monster.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+Monster.Text = "🐒"
+Monster.TextSize = 26
+Monster.Parent = Game1Container
+
+local MonCorner = Instance.new("UICorner")
+MonCorner.CornerRadius = UDim.new(0, 30)
+MonCorner.Parent = Monster
+
+-------------------------------------------------------------------------
+-- الحاوية الخاصة باللعبة الثانية (هروب الزومبي والباركور 🧟‍♂️)
+-------------------------------------------------------------------------
+local Game2Container = Instance.new("Frame")
+Game2Container.Size = UDim2.new(1, 0, 1, -50)
+Game2Container.Position = UDim2.new(0, 0, 0, 50)
+Game2Container.BackgroundTransparency = 1
+Game2Container.Visible = false
+Game2Container.Parent = FullscreenHub
+
+local Score2 = Instance.new("TextLabel")
+Score2.Size = UDim2.new(0, 250, 0, 40)
+Score2.Position = UDim2.new(0.05, 0, 0.05, 0)
+Score2.BackgroundColor3 = Color3.fromRGB(30, 15, 30)
+Score2.Text = "🧟‍♂️ صمود الباركور: 0 ثواني"
+Score2.TextColor3 = Color3.fromRGB(255, 100, 255)
+Score2.TextSize = 14
+Score2.Font = Enum.Font.GothamBold
+Score2.Parent = Game2Container
+
+local S2C = Instance.new("UICorner")
+S2C.CornerRadius = UDim.new(0, 8)
+S2C.Parent = Score2
+
+-- منصات الباركور الوهمية داخل الواعبة للعبة الثانية
+local Platform1 = Instance.new("Frame")
+Platform1.Size = UDim2.new(0, 200, 0, 20)
+Platform1.Position = UDim2.new(0.2, 0, 0.6, 0)
+Platform1.BackgroundColor3 = Color3.fromRGB(70, 70, 90)
+Platform1.Parent = Game2Container
+
+local Platform2 = Instance.new("Frame")
+Platform2.Size = UDim2.new(0, 200, 0, 20)
+Platform2.Position = UDim2.new(0.55, 0, 0.45, 0)
+Platform2.BackgroundColor3 = Color3.fromRGB(70, 70, 90)
+Platform2.Parent = Game2Container
+
+local PlayerAvatar = Instance.new("TextLabel")
+PlayerAvatar.Size = UDim2.new(0, 40, 0, 40)
+PlayerAvatar.Position = UDim2.new(0.25, 0, 0.5, 0)
+PlayerAvatar.BackgroundTransparency = 1
+PlayerAvatar.Text = "🏃‍♂️"
+PlayerAvatar.TextSize = 22
+PlayerAvatar.Parent = Game2Container
+
+local ZombieAvatar = Instance.new("TextLabel")
+ZombieAvatar.Size = UDim2.new(0, 40, 0, 40)
+ZombieAvatar.Position = UDim2.new(0.05, 0, 0.5, 0)
+ZombieAvatar.BackgroundTransparency = 1
+ZombieAvatar.Text = "🧟‍♂️"
+ZombieAvatar.TextSize = 22
+ZombieAvatar.Parent = Game2Container
+
+-------------------------------------------------------------------------
+-- برمجة الأحداث وتنقيب الألعاب
+-------------------------------------------------------------------------
+
+-- 1. زر قبول التحذير وتكبير الواجهة لكل الشاشة
+EnterGameBtn.MouseButton1Click:Connect(function()
+    WarningFrame.Visible = false
+    FullscreenHub.Visible = true
+end)
+
+-- 2. إغلاق تحذير البداية
+CloseWarnBtn.MouseButton1Click:Connect(function()
+    WarningFrame.Visible = false
+end)
+
+-- 3. إغلاق الواجهة بالكامل
+ExitFullBtn.MouseButton1Click:Connect(function()
+    ScreenGui:Destroy()
+end)
+
+-- 4. التبديل للعبة الأولى (صيد الوحش)
+Game1Btn.MouseButton1Click:Connect(function()
+    Game1Container.Visible = true
+    Game2Container.Visible = false
+    Game1Btn.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+    Game2Btn.BackgroundColor3 = Color3.fromRGB(50, 30, 60)
+end)
+
+-- 5. التبديل للعبة الثانية (الزومبي والباركور)
+Game2Btn.MouseButton1Click:Connect(function()
+    Game1Container.Visible = false
+    Game2Container.Visible = true
+    Game2Btn.BackgroundColor3 = Color3.fromRGB(170, 0, 255)
+    Game1Btn.BackgroundColor3 = Color3.fromRGB(30, 30, 45)
+end)
+
+-- منطق لعبة الوحش الأول (حركة عشوائية وضربات)
+local hits = 0
+Monster.MouseButton1Click:Connect(function()
+    hits = hits + 1
+    Score1.Text = "🎯 ضربات الوحش: " .. tostring(hits)
+    local rx = math.random(10, 80) / 100
+    local ry = math.random(20, 75) / 100
+    Monster.Position = UDim2.new(rx, 0, ry, 0)
+end)
+
+-- حركة تلقائية للوحش كل ثانيتين
+task.spawn(function()
+    while true do
+        if FullscreenHub.Visible and Game1Container.Visible then
+            local rx = math.random(10, 80) / 100
+            local ry = math.random(20, 75) / 100
+            Monster.Position = UDim2.new(rx, 0, ry, 0)
+        end
+        task.wait(2)
+    end
+end)
+
+-- منطق لعبة هروب الزومبي والباركور الثاتي
+local survivalTime = 0
+task.spawn(function()
+    while true do
+        if FullscreenHub.Visible and Game2Container.Visible then
+            survivalTime = survivalTime + 1
+            Score2.Text = "🧟‍♂️ صمود الباركور: " .. tostring(survivalTime) .. " ثواني"
+            -- تحرك الزومبي وراء اللاعب تدريجياً
+            local currentX = ZombieAvatar.Position.X.Scale
+            if currentX < 0.8 then
+                ZombieAvatar.Position = UDim2.new(currentX + 0.02, 0, 0.5, 0)
+            else
+                ZombieAvatar.Position = UDim2.new(0.05, 0, 0.5, 0) -- يرجع للبداية إذا مسكك
+            end
+        end
+        task.wait(1)
+    end
+end)
+
+print("👑 تم تفعيل نظام الألعاب الشامل (تغطية الشاشة + تحذير + لعبتين) تحت راية NOKS!")
