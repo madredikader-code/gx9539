@@ -1,0 +1,28 @@
+-- // NOKS Hub - Color Blindness Prank Script \\ --
+-- // سكريبت مقلب تغيير الألوان لعمى الألوان \\ --
+
+local Lighting = game:GetService("Lighting")
+local StarterGui = game:GetService("StarterGui")
+
+-- دالة إرسال إشعار للمتعة
+local function ShowMsg(title, text)
+    pcall(function()
+        StarterGui:SetCore("SendNotification", {
+            Title = title;
+            Text = text;
+            Duration = 5;
+        })
+    end)
+end
+
+ShowMsg("⚠️ تنبيه نظام NOKS", "تم تفعيل وضع عمى الألوان بنجاح! استمتع بالرؤية الجديدة 😂")
+
+-- إضافة تأثيرات تعديل الألوان على الإضاءة (ColorCorrectionEffect)
+local ColorCorrection = Instance.new("ColorCorrectionEffect")
+ColorCorrection.Name = "NOKS_ColorBlindPrank"
+ColorCorrection.Saturation = -1  -- جعل الألوان تبدو رمادية (أبيض وأسود / عمى ألوان كامل)
+ColorCorrection.Contrast = 0.5   -- زيادة التباين لزيادة الغبش
+ColorCorrection.Brightness = -0.1
+ColorCorrection.Parent = Lighting
+
+print("🎨 تم تشغيل مقلب عمى الألوان بواسطة NOKS!")
